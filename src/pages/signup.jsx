@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -6,7 +6,7 @@ const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 const Signup = () => {
   const navigate = useNavigate();
-  const { setUser } = useAuth();
+  const { user, setUser } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -18,6 +18,7 @@ const Signup = () => {
     try {
       const response = await fetch(`${baseURL}/users/register`, {
         method: 'POST',
+        credentials:'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -25,9 +26,8 @@ const Signup = () => {
       });
 
       const data = await response.json();
-
       if (response.ok) {
-        setUser(data.user);
+        setUser(data.user); 
         navigate('/home');
       } else {
         console.error('Registration failed:', data?.message || data);
@@ -38,6 +38,9 @@ const Signup = () => {
       alert('Something went wrong. Please try again later.');
     }
   };
+ useEffect(() => {
+    if (user && user._id) navigate('/home');
+  }, [user, navigate]);
 
   return (
     <div className="flex  flex-col md:flex-row w-screen h-screen">
