@@ -3,6 +3,7 @@ import Navbar from '../components/navbar';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import ProgressBar from '../components/progressbar';
+const baseUrl=import.meta.env.VITE_API_URL;
 
 const Profile = () => {
   const { user, setUser } = useAuth();
@@ -20,6 +21,20 @@ const Profile = () => {
     setShowModal(false);
   };
 
+ const handleDeleteUser = async (userId) => {
+    if (!window.confirm('Are you sure you want to delete this user?')) return;    
+    try {
+      const response = await fetch(`${baseUrl}/users/deleteuser/${userId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error('Failed to delete user');
+      }
+      setUser(null);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     const progressMap = {};
@@ -69,7 +84,7 @@ const Profile = () => {
 
         {/* Account Tab */}
         {activeTab === 'account' && (
-          <div className="bg-white rounded-xl p-6 shadow-xl flex flex-col md:flex-row gap-10">
+          <div className="bg-white  rounded-xl p-6 shadow-xl flex flex-col justify-center items-center md:flex-row gap-10">
             <img
               className="w-40 h-40 rounded-full border-4 border-[#142073]"
               src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name)}&background=04040e&color=fff&size=256`}
@@ -81,12 +96,22 @@ const Profile = () => {
               <p className="text-gray-600 text-lg">{user.email}</p>
               <p className="text-sm text-gray-500">Mobile: <span className="font-medium">{user.mobile}</span></p>
               <p className="text-sm text-gray-500">Joined: <span className="font-medium">{user.createdAt.split('T')[0]}</span></p>
+             <div className=' flex gap-3'>
+              <button
+                className="mt-4 bg-[#a40303] text-white px-5 py-2 rounded-md  hover:bg-[#030406]"
+                onClick={()=>{
+                  handleDeleteUser(user._id)
+                }}
+              >
+                Delete Account
+              </button>
               <button
                 className="mt-4 bg-[#04040e] text-white px-5 py-2 rounded-md hover:bg-[#1a2a80]"
                 onClick={() => setShowModal(true)}
               >
                 Edit Profile
               </button>
+              </div>
             </div>
           </div>
         )}
