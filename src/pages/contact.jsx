@@ -45,7 +45,7 @@ const Contact = () => {
 
   return (
     <div className='w-screen relative '>
-        <div className='w-full sticky top-0'>
+        <div className='w-full sticky top-0 z-50'>
             <Navbar/>
             <hr className='bg-gray-700'/>
         </div>
@@ -57,7 +57,7 @@ const Contact = () => {
 
       <form
         onSubmit={handleSubmit}
-        className="max-w-3xl mx-auto bg-white p-10 rounded-3xl shadow-2xl border border-[#d1d5db] backdrop-blur-md"
+        className="max-w-3xl mx-auto z-0 bg-white p-10 rounded-3xl shadow-2xl border border-[#d1d5db] backdrop-blur-md"
       >
         <div className="grid md:grid-cols-2 gap-6">
           <div>

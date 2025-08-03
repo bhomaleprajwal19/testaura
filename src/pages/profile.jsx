@@ -98,8 +98,8 @@ const Profile = () => {
             {user.quizHistory?.length ? (
               <ul className="space-y-2">
                 {user.quizHistory.map((quiz, index) => (
-                  <li onClick={() => navigate('/quizes')} key={index} className="border p-3 rounded-lg text-sm text-gray-700 flex  items-center">
-                  <img src="past.png" className='w-5 h-5 mx-2' alt="" /> <b>{quiz.subject}</b> — <b>Score: </b> {quiz.score} — <b>Date: </b> {new Date(quiz.createdAt).toLocaleDateString()}
+                  <li onClick={() => navigate('/quizes')} key={index} className="border p-3 rounded-lg text-sm text-gray-700 flex flex-wrap gap-1  items-center">
+                  <img src="past.png" className='w-5 h-5 mx-2' alt="" /> <b>{quiz.subject}</b> | <b> Score: </b> {quiz.score}|<b> Date: </b> {new Date(quiz.createdAt).toLocaleDateString()}
                   </li>
                 ))}
               </ul>

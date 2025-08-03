@@ -120,7 +120,7 @@ const Navbar = () => {
 
           {/* Mobile Dropdown */}
           {isMobileMenuOpen && (
-            <div className="absolute right-0 mt-2 w-48 flex flex-col gap-2 bg-[#1f2a44] rounded-xl p-4 text-white shadow-xl z-50">
+            <div className="absolute right-0 mt-2 w-48 flex flex-col gap-2 bg-[#1f2a44] rounded-xl p-4 text-white shadow-xl z-[100%]">
               {menuItems.map((item) => (
                 <p
                   key={item.path}
