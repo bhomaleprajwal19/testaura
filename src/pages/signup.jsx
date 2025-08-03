@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -13,12 +13,20 @@ const Signup = () => {
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
   const [username, setUsername] = useState('');
+  const [errors, setErrors] = useState([]);
+
+  // Helper to get error message for a field
+  const getError = (field) => {
+    const error = errors.find((err) => err.param === field);
+    return error ? error.msg : '';
+  };
 
   const submitHandler = async () => {
+    setErrors([]); // Clear previous errors
     try {
       const response = await fetch(`${baseURL}/users/register`, {
         method: 'POST',
-        credentials:'include',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -29,23 +37,25 @@ const Signup = () => {
       if (response.ok) {
         setUser(data.user); 
         navigate('/home');
+      } else if (data.errors && Array.isArray(data.errors)) {
+        setErrors(data.errors); // Set validation errors
       } else {
-        console.error('Registration failed:', data?.message || data);
-        alert(data?.message || 'Registration failed. Try again.');
+        alert(data.message || 'Please enter correct information');
       }
     } catch (error) {
       console.error('Error during registration:', error);
       alert('Something went wrong. Please try again later.');
     }
   };
- useEffect(() => {
+
+  useEffect(() => {
     if (user && user._id) navigate('/home');
   }, [user, navigate]);
 
   return (
-    <div className="flex  flex-col md:flex-row w-screen h-screen">
+    <div className="flex flex-col md:flex-row w-screen h-screen">
       {/* Left Section */}
-      <div className=" w-full md:w-[50%] flex flex-col items-center justify-center">
+      <div className="w-full md:w-[50%] flex flex-col items-center justify-center">
         <img
           src="./logo.png"
           onClick={() => navigate('/')}
@@ -73,6 +83,10 @@ const Signup = () => {
               onChange={(e) => setUsername(e.target.value)}
               required
             />
+            {getError('username') && (
+              <p className="text-red-500 text-sm">{getError('username')}</p>
+            )}
+
             <input
               type="text"
               placeholder="Full Name"
@@ -81,6 +95,10 @@ const Signup = () => {
               onChange={(e) => setName(e.target.value)}
               required
             />
+            {getError('name') && (
+              <p className="text-red-500 text-sm">{getError('name')}</p>
+            )}
+
             <input
               type="tel"
               placeholder="Mobile"
@@ -89,6 +107,10 @@ const Signup = () => {
               onChange={(e) => setMobile(e.target.value)}
               required
             />
+            {getError('mobile') && (
+              <p className="text-red-500 text-sm">{getError('mobile')}</p>
+            )}
+
             <input
               type="email"
               placeholder="Email"
@@ -97,6 +119,10 @@ const Signup = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
+            {getError('email') && (
+              <p className="text-red-500 text-sm">{getError('email')}</p>
+            )}
+
             <input
               type="password"
               placeholder="Password"
@@ -105,6 +131,10 @@ const Signup = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+            {getError('password') && (
+              <p className="text-red-500 text-sm">{getError('password')}</p>
+            )}
+
             <button
               type="submit"
               className="bg-[#04040e] text-white p-2 rounded-md w-full hover:cursor-pointer hover:bg-[#292945]"
