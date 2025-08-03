@@ -13,16 +13,27 @@ const Signup = () => {
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
   const [username, setUsername] = useState('');
-  const [errors, setErrors] = useState([]);
 
-  // Helper to get error message for a field
-  const getError = (field) => {
-    const error = errors.find((err) => err.param === field);
-    return error ? error.msg : '';
-  };
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const submitHandler = async () => {
-    setErrors([]); // Clear previous errors
+    if (mobile.length !== 10 || !/^\d+$/.test(mobile)) {
+      alert('Mobile number must be 10 digits and contain only numbers.');
+      return;
+    } else if (name.trim().length < 3) {
+      alert('Name must be at least 3 characters long.');
+      return;
+    } else if (username.trim().length < 3) {
+      alert('Username must be at least 3 characters long.');
+      return;
+    } else if (password.length < 6) {
+      alert('Password must be at least 6 characters long.');
+      return;
+    } else if (!validateEmail(email)) {
+      alert('Enter a valid email address.');
+      return;
+    }
+
     try {
       const response = await fetch(`${baseURL}/users/register`, {
         method: 'POST',
@@ -34,13 +45,18 @@ const Signup = () => {
       });
 
       const data = await response.json();
+
       if (response.ok) {
-        setUser(data.user); 
+        setUser(data.user);
         navigate('/home');
-      } else if (data.errors && Array.isArray(data.errors)) {
-        setErrors(data.errors); // Set validation errors
       } else {
-        alert(data.message || 'Please enter correct information');
+        console.error('Registration failed:', data);
+        if (Array.isArray(data)) {
+          const errorMessages = data.map((err) => err.msg).join('\n');
+          alert(errorMessages);
+        } else {
+          alert(data?.message || 'Registration failed. Please try again.');
+        }
       }
     } catch (error) {
       console.error('Error during registration:', error);
@@ -51,6 +67,8 @@ const Signup = () => {
   useEffect(() => {
     if (user && user._id) navigate('/home');
   }, [user, navigate]);
+
+  const inputClass = 'border-[#04040e] border-2 p-2 rounded-md w-full';
 
   return (
     <div className="flex flex-col md:flex-row w-screen h-screen">
@@ -79,62 +97,42 @@ const Signup = () => {
             <input
               type="text"
               placeholder="Username"
-              className="border-[#04040e] border-2 p-2 rounded-md w-full"
+              className={inputClass}
               onChange={(e) => setUsername(e.target.value)}
               required
             />
-            {getError('username') && (
-              <p className="text-red-500 text-sm">{getError('username')}</p>
-            )}
-
             <input
               type="text"
               placeholder="Full Name"
               autoComplete="name"
-              className="border-[#04040e] border-2 p-2 rounded-md w-full"
+              className={inputClass}
               onChange={(e) => setName(e.target.value)}
               required
             />
-            {getError('name') && (
-              <p className="text-red-500 text-sm">{getError('name')}</p>
-            )}
-
             <input
               type="tel"
               placeholder="Mobile"
               autoComplete="tel"
-              className="border-[#04040e] border-2 p-2 rounded-md w-full"
+              className={inputClass}
               onChange={(e) => setMobile(e.target.value)}
               required
             />
-            {getError('mobile') && (
-              <p className="text-red-500 text-sm">{getError('mobile')}</p>
-            )}
-
             <input
               type="email"
               placeholder="Email"
               autoComplete="email"
-              className="border-[#04040e] border-2 p-2 rounded-md w-full"
+              className={inputClass}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            {getError('email') && (
-              <p className="text-red-500 text-sm">{getError('email')}</p>
-            )}
-
             <input
               type="password"
               placeholder="Password"
               autoComplete="current-password"
-              className="border-[#04040e] border-2 p-2 rounded-md w-full"
+              className={inputClass}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            {getError('password') && (
-              <p className="text-red-500 text-sm">{getError('password')}</p>
-            )}
-
             <button
               type="submit"
               className="bg-[#04040e] text-white p-2 rounded-md w-full hover:cursor-pointer hover:bg-[#292945]"
